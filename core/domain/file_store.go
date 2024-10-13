@@ -15,7 +15,7 @@ type FileStore struct {
 type RepositoryFile interface {
 	AddFile(ctx context.Context, tx *gorm.DB, req []*FileStore) error
 
-	DeleteFileById(ctx context.Context, id int64) error
+	DeleteFileById(ctx context.Context, id int64) (*FileStore, error)
 
 	UpdateFile(ctx context.Context, req *FileStore) error
 

@@ -5,6 +5,7 @@ import (
 	"device_management/core/domain"
 
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 type FileStoreRepository struct {
@@ -22,9 +23,10 @@ func (f *FileStoreRepository) AddFile(ctx context.Context, tx *gorm.DB, req []*d
 	return result.Error
 }
 
-func (f *FileStoreRepository) DeleteFileById(ctx context.Context, id int64) error {
-	result := f.db.Where("id = ?", id).Delete(&domain.FileStore{})
-	return result.Error
+func (f *FileStoreRepository) DeleteFileById(ctx context.Context, id int64) (*domain.FileStore, error) {
+	var file *domain.FileStore
+	result := f.db.Clauses(clause.Returning{}).Where("id = ?", id).Delete(&file)
+	return file, result.Error
 }
 
 func (f *FileStoreRepository) UpdateFile(ctx context.Context, req *domain.FileStore) error {

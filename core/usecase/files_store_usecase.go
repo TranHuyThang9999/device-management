@@ -4,7 +4,6 @@ import (
 	"context"
 	"device_management/common/enums"
 	"device_management/common/log"
-	savefiles "device_management/common/save_files"
 	"device_management/common/utils"
 	"device_management/core/domain"
 	"device_management/core/errors"
@@ -12,7 +11,6 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
-	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -52,58 +50,23 @@ func (u *UseCaseFileStore) DeleteFileById(ctx *gin.Context, id string) errors.Er
 		return errors.ErrUnAuthorized
 	}
 	if role != enums.RoleAdmin {
-		return errors.NewSystemError("invalid permisson")
+		return errors.ErrUnAuthorized
 	}
 	idNumber, err := strconv.ParseInt(id, 10, 64)
 	if err != nil {
 		return errors.NewSystemError("error parsing")
 	}
-	err = u.files.DeleteFileById(ctx, idNumber)
+	deletedFile, err := u.files.DeleteFileById(ctx, idNumber)
 	if err != nil {
 		return errors.NewSystemError("error system getting")
 	}
-	return nil
-}
-
-func (u *UseCaseFileStore) TriggerClearFiles(ctx context.Context) errors.Error {
-	files := savefiles.ListFilesInDirectory("publics")
-
-	listFilesFromDb, err := u.files.GetListFiles(ctx)
-	if err != nil {
-		log.Error(err, "error getting files from database")
-		return errors.ErrSystem
-	}
-
-	dbFileMap := make(map[string]struct{})
-	for _, v := range listFilesFromDb {
-		dbFileMap[filepath.Base(v.URL)] = struct{}{}
-	}
-
-	for _, file := range files {
-		fileName := filepath.Base(file)
-		if _, exists := dbFileMap[fileName]; !exists {
-			filePath := filepath.Join("publics", fileName)
-			if err := os.Remove(filePath); err != nil {
-				log.Error(err, fmt.Sprintf("failed to delete file: %s", filePath))
-				continue
-			}
-			log.Infof("Deleted file: %s", filePath)
+	if deletedFile != nil {
+		filePath := filepath.Join("publics", filepath.Base(deletedFile.URL))
+		if err := os.Remove(filePath); err != nil {
+			log.Error(err, "failed to delete the file from the filesystem")
+		} else {
+			log.Info(fmt.Sprintf("Successfully deleted file: %s", filePath))
 		}
 	}
-
 	return nil
-}
-
-func (u *UseCaseFileStore) AutoCleanUp(ctx context.Context, interval time.Duration) {
-	ticker := time.NewTicker(interval)
-	defer ticker.Stop()
-
-	for {
-		select {
-		case <-ticker.C:
-			if err := u.TriggerClearFiles(ctx); err != nil {
-				log.Error(err, "error occurred during file cleanup")
-			}
-		}
-	}
 }
