@@ -1,0 +1,7 @@
+{
+    "data_source": "host=localhost user=postgres password=1234 dbname=medical_equipment port=5432 sslmode=disable TimeZone=Asia/Shanghai",
+    "port": "8080",
+    "secret":"cdsv89noicjdswcvwsoi8!?cad",
+    "expiration":"168h"
+
+}
