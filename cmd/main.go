@@ -31,7 +31,6 @@ func main() {
 		fx.Provide(configs.Get),
 		fx.Options(fxloader.Load()...),
 		fx.Invoke(serverLifecycle),
-		// fx.Invoke(initializeCleanup), // Register the cleanup function to run on startup
 		fx.Options(),
 	)
 
@@ -70,16 +69,3 @@ func serverLifecycle(lc fx.Lifecycle, apiRouter *routers.ApiRouter, cf *configs.
 		},
 	})
 }
-
-// func initializeCleanup(lc fx.Lifecycle, useCaseFileStore *usecase.UseCaseFileStore) {
-// 	lc.Append(fx.Hook{
-// 		OnStart: func(ctx context.Context) error {
-// 			go useCaseFileStore.AutoCleanUp(ctx, 5*time.Hour) // Start the cleanup process
-// 			return nil
-// 		},
-// 		OnStop: func(ctx context.Context) error {
-// 			log.Info("Stopping cleanup process.")
-// 			return nil
-// 		},
-// 	})
-// }
