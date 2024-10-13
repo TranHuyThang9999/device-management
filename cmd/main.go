@@ -4,6 +4,7 @@ import (
 	"context"
 	"device_management/api/routers"
 	"device_management/common/log"
+	"device_management/common/migrate"
 	"device_management/core/configs"
 	"device_management/fxloader"
 	"flag"
@@ -21,6 +22,7 @@ func init() {
 	flag.StringVar(&pathConfig, "configs", "./configs/config.json", "path config")
 	flag.Parse()
 	configs.LoadConfig(pathConfig)
+	migrate.MigratePgsqlS()
 
 }
 

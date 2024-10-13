@@ -15,6 +15,7 @@ CREATE TABLE IF NOT EXISTS users (
 -- Bảng devices (thiết bị)
 CREATE TABLE IF NOT EXISTS devices (
     id BIGINT PRIMARY KEY, -- ID thiết bị
+    quantity integer,
     device_name VARCHAR(255) NOT NULL, -- Tên thiết bị
     description TEXT, -- Mô tả thiết bị
     status INT, -- Tình trạng thiết bị (hoạt động, hỏng, bảo trì,...)
