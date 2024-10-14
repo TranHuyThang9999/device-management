@@ -2,10 +2,27 @@ package main
 
 import (
 	"fmt"
-	"path/filepath"
+	"math/rand"
 )
 
 func main() {
-	path := "http://127.0.0.1:8080/manager/files/export/f57387fe-412e-4f29-800e-2223feedac02.png"
-	fmt.Println(filepath.Base(path))
+	for i := 0; i < 10; i++ {
+		fmt.Println(GenPassWord())
+	}
+}
+func GenPassWord() string {
+	lower := "abcdefghijklmnopqrstuvwxyz"
+	upper := "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+	digits := "0123456789"
+	all := lower + upper + digits
+
+	passLength := 12
+	password := make([]byte, passLength)
+
+	for i := range password {
+		index := rand.Intn(len(all))
+		password[i] = all[index]
+	}
+
+	return string(password)
 }

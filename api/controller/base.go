@@ -32,6 +32,7 @@ func (b *baseController) validateRequest(request interface{}) error {
 	}
 	return nil
 }
+
 func (b *baseController) GenRequestId() string {
 	return uuid.New().String()
 }

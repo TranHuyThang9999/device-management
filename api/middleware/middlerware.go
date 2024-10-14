@@ -45,6 +45,11 @@ func (m *Middleware) Authenticate() gin.HandlerFunc {
 			return
 		}
 		user, err := m.user.GetInforUser(context, data.UserName)
+		if err != nil {
+			context.JSON(401, gin.H{"error": "invalid authorization"})
+			context.Abort()
+			return
+		}
 		if data.UpdatedAt != user.UpdatedAt {
 			context.JSON(401, gin.H{"error": "invalid authorization"})
 			context.Abort()

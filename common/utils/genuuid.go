@@ -53,8 +53,6 @@ func GenPassWord() string {
 	passLength := 12
 	password := make([]byte, passLength)
 
-	rand.Seed(time.Now().UnixNano())
-
 	for i := range password {
 		index := rand.Intn(len(all))
 		password[i] = all[index]
