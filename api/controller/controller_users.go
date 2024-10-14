@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"device_management/common/enums"
 	"device_management/core/entities"
 	"device_management/core/usecase"
 	"strings"
@@ -76,13 +77,16 @@ func (u *ControllerUsers) CheckToken(context *gin.Context) {
 
 	tokenString := tokenParts[1]
 
-	_, err := u.jwt.Verify(tokenString)
+	data, err := u.jwt.Verify(tokenString)
 	if err != nil {
-		context.JSON(401, gin.H{"error": "invalid authorization"})
+		context.JSON(401, gin.H{
+			"code":  enums.InvalidToken,
+			"error": "invalid authorization",
+		})
 		context.Abort()
 		return
 	}
-	u.base.Success(context, nil)
+	u.base.Success(context, data)
 }
 
 func (u *ControllerUsers) DeleteUserById(ctx *gin.Context) {

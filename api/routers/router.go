@@ -34,6 +34,7 @@ func NewApiRouter(
 	r.GET("/ping", func(c *gin.Context) {
 		c.JSON(200, gin.H{"message": "pong"})
 	})
+
 	r.POST("/login", user.Login)
 	r.POST("/check", user.CheckToken)
 	userGroup := r.Group("/user", jwt.Authenticate())

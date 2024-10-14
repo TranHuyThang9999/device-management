@@ -34,7 +34,7 @@ func (u *UseCaseUser) AddUser(ctx *gin.Context, req *entities.User) errors.Error
 	}
 
 	if role != enums.RoleAdmin {
-		return errors.NewSystemError("invalid permisson")
+		return errors.ErrUnAuthorized
 	}
 	user, err := u.user.GetUserByUserName(ctx, req.UserName)
 	if err != nil {
@@ -97,6 +97,7 @@ func (u *UseCaseUser) Login(ctx context.Context, userName, passWord string) (*en
 		Token:     token.Token,
 		UserName:  userName,
 		UserId:    user.ID,
+		Role:      user.Role,
 		UpdatedAt: utils.GenerateTimestamp(),
 	}, nil
 }
@@ -106,12 +107,13 @@ func (u *UseCaseUser) GetListUser(ctx *gin.Context, limitStr, offsetStr string) 
 	role, err := utils.GetRoleFromContext(ctx)
 
 	if err != nil {
-		log.Error(err, "error system")
-		return nil, errors.NewSystemError("invalid permission")
+		log.Error(err, "error system authorization")
+		return nil, errors.ErrUnAuthorized
 	}
 
 	if role != enums.RoleAdmin {
-		return nil, errors.NewSystemError("invalid permission")
+		log.Error(err, "error system authorization")
+		return nil, errors.ErrUnAuthorized
 	}
 
 	limit, err := strconv.Atoi(limitStr)

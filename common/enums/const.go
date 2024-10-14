@@ -5,6 +5,7 @@ const (
 )
 const (
 	SuccessMessage = "success"
+	InvalidToken   = 401
 )
 
 const (
