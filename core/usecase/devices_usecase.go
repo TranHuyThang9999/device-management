@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"context"
 	"device_management/common/enums"
 	"device_management/common/log"
 	"device_management/common/utils"
@@ -182,4 +183,50 @@ func (u *UseCaseDevice) UpdatedDeviceById(ctx *gin.Context, req *entities.Device
 
 	return nil
 
+}
+
+func (u *UseCaseDevice) GetListDeviceForUser(ctx context.Context, limitStr, offsetStr string) ([]*domain.DevicesGetForUser, errors.Error) {
+
+	var listDevicesResponse = make([]*domain.DevicesGetForUser, 0)
+	var filesMap = make(map[int64][]string)
+
+	limit, err := strconv.Atoi(limitStr)
+	if err != nil || limit <= 0 {
+		limit = 10
+	}
+
+	offset, err := strconv.Atoi(offsetStr)
+	if err != nil || offset < 0 {
+		offset = 0
+	}
+
+	listDevice, err := u.device.GetListDevice(ctx, limit, offset)
+	if err != nil {
+		log.Error(err, "error fetching device list")
+		return nil, errors.NewSystemError("error system")
+	}
+
+	getAllFile, err := u.file.GetListFiles(ctx)
+	if err != nil {
+		log.Error(err, "error fetching file list")
+		return nil, errors.NewSystemError("error system")
+	}
+
+	for _, file := range getAllFile {
+		filesMap[file.AnyID] = append(filesMap[file.AnyID], file.URL)
+	}
+
+	for _, device := range listDevice {
+		listUrl := filesMap[device.ID]
+
+		listDevicesResponse = append(listDevicesResponse, &domain.DevicesGetForUser{
+			Id:          device.ID,
+			DeviceName:  device.DeviceName,
+			Quantity:    device.Quantity,
+			Description: device.Description,
+			Url:         listUrl,
+		})
+	}
+
+	return listDevicesResponse, nil
 }

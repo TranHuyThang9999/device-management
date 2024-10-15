@@ -68,3 +68,13 @@ func (h *ControllerDevices) UpdatedDeviceById(ctx *gin.Context) {
 
 	h.base.Success(ctx, nil)
 }
+func (u *ControllerDevices) GetListDeviceForUser(ctx *gin.Context) {
+	limit := ctx.Query("limit")
+	offsert := ctx.Query("offset")
+	devices, err := u.device.GetListDeviceForUser(ctx, limit, offsert)
+	if err != nil {
+		u.base.ErrorData(ctx, err)
+		return
+	}
+	u.base.Success(ctx, devices)
+}

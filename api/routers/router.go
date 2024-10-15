@@ -52,6 +52,11 @@ func NewApiRouter(
 		fileGroup.GET("/list", file.GetListFilesByObjectId)
 		fileGroup.DELETE("/delete", jwt.Authenticate(), file.DeleteFileById)
 	}
+	//view user
+	viewForUser := r.Group("/view")
+	{
+		viewForUser.GET("/list", device.GetListDeviceForUser)
+	}
 	//device
 	deviceGroup := r.Group("/device", jwt.Authenticate())
 	{
