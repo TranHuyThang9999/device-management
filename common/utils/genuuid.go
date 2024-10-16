@@ -9,20 +9,29 @@ import (
 )
 
 var (
-	mu sync.Mutex
+	mu       sync.Mutex
+	usedKeys = make(map[int64]struct{})
 )
 
 func GenerateUniqueKey() int64 {
 	mu.Lock()
 	defer mu.Unlock()
+
 	var length = 8
 	seededRand := rand.New(rand.NewSource(time.Now().UnixNano()))
 
-	key := int64(0)
-	for i := 0; i < length; i++ {
-		key = key*10 + int64(seededRand.Intn(9)) + 1
+	for {
+		key := int64(0)
+		for i := 0; i < length; i++ {
+			key = key*10 + int64(seededRand.Intn(9)) + 1
+		}
+
+		// Check if the key is already used
+		if _, exists := usedKeys[key]; !exists {
+			usedKeys[key] = struct{}{}
+			return key
+		}
 	}
-	return key
 }
 
 func GenerateTimestamp() int64 {

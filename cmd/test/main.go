@@ -1,13 +1,14 @@
 package main
 
 import (
+	"device_management/common/utils"
 	"fmt"
 	"math/rand"
 )
 
 func main() {
 	for i := 0; i < 10; i++ {
-		fmt.Println(GenPassWord())
+		fmt.Println(utils.GenerateUniqueKey())
 	}
 }
 func GenPassWord() string {
