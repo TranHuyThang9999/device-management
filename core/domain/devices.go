@@ -15,13 +15,6 @@ type Device struct {
 	CreatedAt   int64  `json:"created_at"`  // Thời gian tạo
 	UpdatedAt   int64  `json:"updated_at"`  // Thời gian cập nhật
 }
-type DevicesGetForUser struct {
-	Id          int64    `json:"id"`
-	DeviceName  string   `json:"device_name"`
-	Quantity    int      `json:"quantity"`
-	Description string   `json:"description"`
-	Url         []string `json:"url,omitempty"`
-}
 
 type RepositoryDevice interface {
 	AddDevice(ctx context.Context, tx *gorm.DB, device *Device) error

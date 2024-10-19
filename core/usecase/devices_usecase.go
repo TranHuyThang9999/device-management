@@ -185,9 +185,9 @@ func (u *UseCaseDevice) UpdatedDeviceById(ctx *gin.Context, req *entities.Device
 
 }
 
-func (u *UseCaseDevice) GetListDeviceForUser(ctx context.Context, limitStr, offsetStr string) ([]*domain.DevicesGetForUser, errors.Error) {
+func (u *UseCaseDevice) GetListDeviceForUser(ctx context.Context, limitStr, offsetStr string) ([]*entities.DevicesGetForUser, errors.Error) {
 
-	var listDevicesResponse = make([]*domain.DevicesGetForUser, 0)
+	var listDevicesResponse = make([]*entities.DevicesGetForUser, 0)
 	var filesMap = make(map[int64][]string)
 
 	limit, err := strconv.Atoi(limitStr)
@@ -219,7 +219,7 @@ func (u *UseCaseDevice) GetListDeviceForUser(ctx context.Context, limitStr, offs
 	for _, device := range listDevice {
 		listUrl := filesMap[device.ID]
 
-		listDevicesResponse = append(listDevicesResponse, &domain.DevicesGetForUser{
+		listDevicesResponse = append(listDevicesResponse, &entities.DevicesGetForUser{
 			Id:          device.ID,
 			DeviceName:  device.DeviceName,
 			Quantity:    device.Quantity,
